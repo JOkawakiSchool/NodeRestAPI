@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export class car {
     _model: any;
@@ -9,9 +9,7 @@ export class car {
             model: { type: String, maxlength: 24 },
             year: { type: String, maxlength: 24 },
             mileage: { type: String, maxlength: 24 },
-            accidents: { type: String, maxlength: 24 },
-            owners: { type: String, maxlength: 24 },
-            price: { type: String, maxlength: 24 },
+            color: { type: String, maxlength: 24 },
             user_id: {
                 type: Number,
                 key: 'foreign',
@@ -20,33 +18,83 @@ export class car {
                 onUpdate: 'cascade'
             },
         }, "A table to store user's car info", [{
-                route: '/get-all-cars',
-                method: 'get',
-                callback: this.getAllCars,
-                requireToken: true,
-        },
-        {
-            route: '/get-car-by-id/id/:id',
+            route: '/get-all-cars',
             method: 'POST',
             callback: this.getAllCars,
             requireToken: true,
         },
-    
-    ]];
+        {
+            route: '/get-car-by-id/:id',
+            method: 'POST',
+            callback: this.getCarById,
+            requireToken: true,
+        },
+        {
+            route: '/create-car',
+            method: 'POST',
+            callback: this.createCar,
+            requireToken: true,
+        },
+        {
+            route: '/update-car/id/:id',
+            method: 'PUT',
+            callback: this.updateCar,
+            requireToken: true,
+        },
+        {
+            route: '/delete/id/:id',
+            method: 'DELETE',
+            callback: this.deleteCar,
+            requireToken: true,
+        }
+        ]];
     }
 
+    updateCar(model: any) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            console.log(' req.body===>', req.body)
+            let carCtrl = model.controller;
+            let resp = await carCtrl.update(req, null, null)
+            res.json({ message: 'Success', resp });
+        }
+    }
+    deleteCar(model: any) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            console.log(' req.body===>', req.body)
+            let carCtrl = model.controller;
+            let resp = await carCtrl.remove(req, null, null)
+            res.json({ message: 'Success', resp });
+        }
+    }
+    createCar(model: any) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            console.log(' req.body===>', req.body)
+            let carCtrl = model.controller;
+            let resp = await carCtrl.insert(req, null, null)
+            res.json({ message: 'Success', resp });
+        }
+    }
     getAllCars(model: any) {
-        return (req: Request, res: Response, next: NextFunction) => {
-            let payload = {
-                body: {
-                    get: ["*"]
+        return async (req: Request, res: Response, next: NextFunction) => {
+            req.body = {
+                get: ["*"]
+            }
+            let carCtrl = model.controller;
+            let resp = await carCtrl.get(req, null, null)
+            res.json({ message: 'Success', resp });
+        }
+    }
+    getCarById(model: any) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            req.body = {
+                get: ["*"],
+                where: {
+                    id: req.params.id
                 }
             }
-            let testModel = model.model.controller;
-            console.log('model', model);
-            //let resp = testModel.controller.get(req, null, null);
-            // console.log('from test model resp: ', resp);
-            res.json({ message: 'rom getAllCars works...' });
+            let carCtrl = model.controller;
+            let resp = await carCtrl.get(req, null, null);
+            res.json({ message: 'Success', resp });
         }
     }
 
