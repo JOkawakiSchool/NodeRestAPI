@@ -24,7 +24,15 @@ export class car {
                 method: 'get',
                 callback: this.getAllCars,
                 requireToken: true,
-        }]];
+        },
+        {
+            route: '/get-car-by-id/id/:id',
+            method: 'POST',
+            callback: this.getAllCars,
+            requireToken: true,
+        },
+    
+    ]];
     }
 
     getAllCars(model: any) {
