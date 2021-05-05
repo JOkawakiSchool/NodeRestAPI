@@ -14,7 +14,7 @@ class car {
                     onDelete: 'cascade',
                     onUpdate: 'cascade'
                 },
-            }, "A table to store user's car model", []];
+            }, "A table to store user's car info", []];
     }
     set model(model) {
         this._model = model;
